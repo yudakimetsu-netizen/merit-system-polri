@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  password String
+  role     String   // ADMIN, OPERATOR
+  satkerId Int?
+  satker   Satker?  @relation(fields: [satkerId], references: [id])
+}
+
+model Satker {
+  id       Int              @id @default(autoincrement())
+  kode     String           @unique
+  nama     String
+  users    User[]
+  personel Personel[]
+  riwayat  RiwayatJabatan[]
+}
+
+model Personel {
+  id           Int              @id @default(autoincrement())
+  nama         String
+  nrp          String           @unique
+  pangkat      String
+  tempatLahir  String
+  tanggalLahir DateTime
+  satkerId     Int
+  satker       Satker           @relation(fields: [satkerId], references: [id])
+  riwayat      RiwayatJabatan[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model RiwayatJabatan {
+  id              Int       @id @default(autoincrement())
+  personelId      Int
+  personel        Personel  @relation(fields: [personelId], references: [id], onDelete: Cascade)
+  jabatan         String
+  satkerId        Int
+  satker          Satker    @relation(fields: [satkerId], references: [id])
+  fungsi          String
+  tanggalMulai    DateTime
+  tanggalBerakhir DateTime?
+  nivelering      Int
+  statusJabatan   String    // AKTIF, NONAKTIF
+  keterangan      String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
