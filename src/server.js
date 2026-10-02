@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static('.'));
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 
