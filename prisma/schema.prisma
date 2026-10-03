@@ -11,6 +11,7 @@ model User {
   id       Int      @id @default(autoincrement())
   username String   @unique
   password String
+  email    String?
   role     String   // ADMIN, OPERATOR
   satkerId Int?
   satker   Satker?  @relation(fields: [satkerId], references: [id])
@@ -26,17 +27,25 @@ model Satker {
 }
 
 model Personel {
-  id           Int              @id @default(autoincrement())
-  nama         String
-  nrp          String           @unique
-  pangkat      String
-  tempatLahir  String
-  tanggalLahir DateTime
-  satkerId     Int
-  satker       Satker           @relation(fields: [satkerId], references: [id])
-  riwayat      RiwayatJabatan[]
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  id                Int              @id @default(autoincrement())
+  nama              String
+  nrp               String           @unique
+  nik               String?
+  pangkat           String
+  jenisKelamin      String?          // Laki-laki, Perempuan
+  jenisPersonel     String?          // POLRI, ASN
+  tempatLahir       String
+  tanggalLahir      DateTime
+  email             String?
+  tingkatPendidikan String?          // SD, SMP, SMA, D3, D4/S1, S2, S3
+  statusPersonel    String           @default("AKTIF") // AKTIF, PENSIUN, NONAKTIF
+  pernahDiklat      String?          // PENDIDIKAN, DIKLAT, SEMUA
+  satkerId          Int
+  satker            Satker           @relation(fields: [satkerId], references: [id])
+  riwayat           RiwayatJabatan[]
+  pendidikan        Pendidikan[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 }
 
 model RiwayatJabatan {
@@ -54,4 +63,16 @@ model RiwayatJabatan {
   keterangan      String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+}
+
+model Pendidikan {
+  id             Int      @id @default(autoincrement())
+  personelId     Int
+  personel       Personel @relation(fields: [personelId], references: [id], onDelete: Cascade)
+  jenis          String   // PENDIDIKAN, DIKLAT
+  nama           String   // S1 Teknik Informatika, Sespimti, dll
+  institusi      String?
+  tahunLulus     Int?
+  keterangan     String?
+  createdAt      DateTime @default(now())
 }

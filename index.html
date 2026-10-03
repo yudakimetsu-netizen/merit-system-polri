@@ -8,55 +8,39 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
     * { font-family: 'Inter', sans-serif; }
-    
     body { background-color: #f1f5f9; }
-
-    /* Sidebar */
-    .sidebar {
-      background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
-    }
-    .sidebar a {
-      color: #cbd5e1;
-      transition: all 0.2s ease;
-      border-left: 3px solid transparent;
-    }
-    .sidebar a:hover {
-      color: #ffffff;
-      background-color: rgba(255, 255, 255, 0.08);
-      border-left-color: #fbbf24;
-    }
-    .sidebar .active {
-      color: #ffffff;
-      background-color: rgba(255, 255, 255, 0.15);
-      border-left-color: #fbbf24;
-      font-weight: 600;
-    }
-
-    /* Cards */
-    .stat-card {
-      transition: box-shadow 0.2s ease;
-    }
-    .stat-card:hover {
-      box-shadow: 0 8px 20px rgba(30, 58, 138, 0.15);
-    }
-
-    /* Table */
-    table tbody tr {
-      transition: background-color 0.15s ease;
-    }
-    table tbody tr:hover {
-      background-color: #f8fafc;
-    }
+    .sidebar { background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%); }
+    .sidebar a { color: #cbd5e1; transition: all 0.2s ease; border-left: 3px solid transparent; }
+    .sidebar a:hover { color: #fff; background-color: rgba(255,255,255,0.08); border-left-color: #fbbf24; }
+    .sidebar .active { color: #fff; background-color: rgba(255,255,255,0.15); border-left-color: #fbbf24; font-weight: 600; }
+    .stat-card { transition: box-shadow 0.2s ease; }
+    .stat-card:hover { box-shadow: 0 8px 20px rgba(30,58,138,0.15); }
+    table tbody tr { transition: background-color 0.15s ease; cursor: pointer; }
+    table tbody tr:hover { background-color: #f8fafc; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.active { display: flex; }
+    .modal-content { background: #fff; border-radius: 8px; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .tab-btn { padding: 8px 16px; border-radius: 6px; font-size: 14px; transition: all 0.2s; }
+    .tab-btn.active { background: #1e3a8a; color: #fff; }
+    .tab-btn:not(.active) { color: #64748b; }
+    .tab-btn:not(.active):hover { background: #f1f5f9; }
+    .form-input { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
+    .form-input:focus { outline: none; border-color: #1e3a8a; box-shadow: 0 0 0 2px rgba(30,58,138,0.1); }
+    .form-label { display: block; font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 4px; }
+    .btn-primary { background: #1e3a8a; color: #fff; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; }
+    .btn-primary:hover { background: #1e40af; }
+    .btn-secondary { background: #e5e7eb; color: #374151; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; border: none; }
+    .btn-secondary:hover { background: #d1d5db; }
+    .btn-gold { background: #f59e0b; color: #fff; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; }
+    .btn-gold:hover { background: #d97706; }
   </style>
 </head>
 <body class="h-screen flex overflow-hidden">
 
-  <!-- HALAMAN LOGIN -->
+  <!-- LOGIN PAGE -->
   <div id="login-page" class="flex-1 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
-      <!-- Header Biru -->
       <div class="bg-gradient-to-r from-blue-900 to-blue-700 p-8 text-center">
         <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-md mb-3">
           <span class="text-3xl">🛡️</span>
@@ -64,33 +48,29 @@
         <h1 class="text-2xl font-bold text-white">MERIT SYSTEM</h1>
         <p class="text-blue-200 text-xs mt-1 tracking-widest">PERSONEL POLRI</p>
       </div>
-      
-      <!-- Form -->
       <div class="p-8">
         <h2 class="text-lg font-semibold text-gray-700 mb-6 text-center">Silakan Login</h2>
         <form id="login-form">
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-            <input type="text" id="username" class="w-full p-3 border border-gray-300 rounded-md focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 transition" placeholder="Masukkan username" required>
+            <label class="form-label">Username</label>
+            <input type="text" id="username" class="form-input" placeholder="Masukkan username" required>
           </div>
           <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input type="password" id="password" class="w-full p-3 border border-gray-300 rounded-md focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 transition" placeholder="Masukkan password" required>
+            <label class="form-label">Password</label>
+            <input type="password" id="password" class="form-input" placeholder="Masukkan password" required>
           </div>
-          <button type="submit" class="w-full bg-blue-800 text-white p-3 rounded-md font-semibold hover:bg-blue-900 transition">LOGIN</button>
+          <button type="submit" class="btn-primary w-full" style="padding: 12px;">LOGIN</button>
         </form>
         <p id="login-error" class="text-red-600 text-sm mt-3 text-center"></p>
       </div>
-
       <div class="bg-gray-50 text-center py-3 border-t border-gray-200">
         <p class="text-xs text-gray-500">© 2026 SSDM Polri - Sistem Merit Personel</p>
       </div>
     </div>
   </div>
 
-  <!-- HALAMAN DASHBOARD -->
+  <!-- DASHBOARD PAGE -->
   <div id="dashboard-page" class="flex-1 flex hidden">
-    <!-- Sidebar -->
     <aside class="sidebar w-64 flex flex-col shadow-xl">
       <div class="p-5 border-b border-blue-800 flex items-center gap-3">
         <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
@@ -101,14 +81,12 @@
           <p class="text-blue-300 text-xs">Sistem Personel</p>
         </div>
       </div>
-
       <nav class="flex-1 p-3 space-y-1">
-        <a href="#" class="block p-3 rounded text-sm active">📊 Dashboard</a>
-        <a href="#" onclick="loadPersonel()" class="block p-3 rounded text-sm">👥 Data Personel</a>
+        <a href="#" onclick="showPage('dashboard')" class="block p-3 rounded text-sm active" id="menu-dashboard">📊 Dashboard</a>
+        <a href="#" onclick="showPage('personel')" class="block p-3 rounded text-sm" id="menu-personel">👥 Data Personel</a>
         <a href="#" class="block p-3 rounded text-sm">🏢 Scope Organisasi</a>
         <a href="#" class="block p-3 rounded text-sm">🔐 Ganti Password</a>
       </nav>
-
       <div class="p-4 border-t border-blue-800">
         <div class="flex items-center gap-3 mb-3">
           <div class="w-9 h-9 bg-yellow-500 rounded-full flex items-center justify-center font-bold text-blue-900 text-sm">A</div>
@@ -121,97 +99,191 @@
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="flex-1 flex flex-col overflow-hidden">
-      <!-- Header -->
       <header class="bg-white shadow-sm p-4 flex justify-between items-center border-b border-gray-200">
         <div>
           <h1 class="text-xl font-bold text-gray-800">Dashboard</h1>
           <p class="text-gray-500 text-xs">Sistem Merit Personel Polri</p>
         </div>
-        <div class="flex items-center gap-3">
-          <span class="text-sm text-gray-600">Selamat Datang, <b class="text-blue-800">Admin</b></span>
-        </div>
+        <span class="text-sm text-gray-600">Selamat Datang, <b class="text-blue-800">Admin</b></span>
       </header>
 
       <div class="flex-1 p-6 overflow-y-auto">
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <!-- STATS -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div class="stat-card bg-white p-5 rounded-lg shadow-sm border-l-4 border-blue-600">
-            <div class="flex justify-between items-center">
-              <div>
-                <p class="text-gray-500 text-xs font-medium uppercase tracking-wide">Total Personel</p>
-                <p class="text-3xl font-bold text-gray-800 mt-1" id="total-personel">0</p>
-              </div>
-              <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-2xl">👥</div>
-            </div>
+            <p class="text-gray-500 text-xs font-medium uppercase">Total Personel</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1" id="total-personel">0</p>
           </div>
           <div class="stat-card bg-white p-5 rounded-lg shadow-sm border-l-4 border-green-600">
-            <div class="flex justify-between items-center">
-              <div>
-                <p class="text-gray-500 text-xs font-medium uppercase tracking-wide">Jabatan Aktif</p>
-                <p class="text-3xl font-bold text-gray-800 mt-1">0</p>
-              </div>
-              <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center text-2xl">💼</div>
-            </div>
+            <p class="text-gray-500 text-xs font-medium uppercase">Personel Aktif</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1" id="total-aktif">0</p>
           </div>
           <div class="stat-card bg-white p-5 rounded-lg shadow-sm border-l-4 border-yellow-500">
-            <div class="flex justify-between items-center">
-              <div>
-                <p class="text-gray-500 text-xs font-medium uppercase tracking-wide">Satker</p>
-                <p class="text-3xl font-bold text-gray-800 mt-1">2</p>
-              </div>
-              <div class="w-12 h-12 bg-yellow-50 rounded-lg flex items-center justify-center text-2xl">🏢</div>
-            </div>
+            <p class="text-gray-500 text-xs font-medium uppercase">Total Satker</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1" id="total-satker">0</p>
+          </div>
+          <div class="stat-card bg-white p-5 rounded-lg shadow-sm border-l-4 border-purple-600">
+            <p class="text-gray-500 text-xs font-medium uppercase">Perwira</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1" id="total-perwira">0</p>
           </div>
         </div>
 
-        <!-- Chart & Table -->
+        <!-- CHARTS -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-          <div class="lg:col-span-1 bg-white p-5 rounded-lg shadow-sm">
-            <h3 class="font-semibold text-gray-800 mb-4 text-sm">📈 Distribusi Pangkat</h3>
-            <canvas id="chartPersonel"></canvas>
+          <div class="bg-white p-5 rounded-lg shadow-sm">
+            <h3 class="font-semibold text-gray-800 mb-4 text-sm">👥 Kelompok Usia</h3>
+            <canvas id="chartUsia"></canvas>
           </div>
+          <div class="bg-white p-5 rounded-lg shadow-sm">
+            <h3 class="font-semibold text-gray-800 mb-4 text-sm">🎖️ Distribusi Pangkat</h3>
+            <canvas id="chartPangkat"></canvas>
+          </div>
+          <div class="bg-white p-5 rounded-lg shadow-sm">
+            <h3 class="font-semibold text-gray-800 mb-4 text-sm">🏢 Top Satker</h3>
+            <canvas id="chartSatker"></canvas>
+          </div>
+        </div>
 
-          <div class="lg:col-span-2 bg-white rounded-lg shadow-sm p-5">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="font-semibold text-gray-800 text-sm">📋 Data Personel</h2>
-              <button onclick="alert('Fitur tambah masih dalam pengembangan')" class="bg-blue-800 text-white px-4 py-2 rounded-md text-xs font-medium hover:bg-blue-900 transition">+ Tambah Personel</button>
+        <!-- TABLE -->
+        <div class="bg-white rounded-lg shadow-sm p-5">
+          <div class="flex flex-wrap justify-between items-center mb-4 gap-3">
+            <h2 class="font-semibold text-gray-800 text-sm">📋 Data Personel</h2>
+            <div class="flex gap-2 flex-wrap">
+              <input type="text" id="search-input" placeholder="Cari nama / NRP..." class="form-input" style="width: 220px; padding: 6px 12px;" oninput="loadPersonel()">
+              <select id="filter-status" class="form-input" style="width: 140px; padding: 6px 12px;" onchange="loadPersonel()">
+                <option value="">Semua Status</option>
+                <option value="AKTIF">Aktif</option>
+                <option value="PENSIUN">Pensiun</option>
+              </select>
+              <button onclick="bukaFormTambah()" class="btn-primary text-xs">+ Tambah Personel</button>
             </div>
+          </div>
+          <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
                 <tr class="bg-gray-50 text-gray-600 text-xs uppercase border-b border-gray-200">
                   <th class="p-3 font-semibold">NRP</th>
                   <th class="p-3 font-semibold">Nama</th>
                   <th class="p-3 font-semibold">Pangkat</th>
-                  <th class="p-3 font-semibold">Tempat Lahir</th>
+                  <th class="p-3 font-semibold">Jenis</th>
+                  <th class="p-3 font-semibold">Status</th>
+                  <th class="p-3 font-semibold">Satker</th>
                   <th class="p-3 font-semibold">Aksi</th>
                 </tr>
               </thead>
               <tbody id="personel-table" class="text-gray-700 text-sm"></tbody>
             </table>
           </div>
+          <div class="flex justify-between items-center mt-4">
+            <p class="text-xs text-gray-500" id="pagination-info">Menampilkan 0 data</p>
+            <div class="flex gap-2">
+              <button onclick="prevPage()" id="btn-prev" class="btn-secondary text-xs">‹ Sebelumnya</button>
+              <button onclick="nextPage()" id="btn-next" class="btn-secondary text-xs">Berikutnya ›</button>
+            </div>
+          </div>
         </div>
-
-        <footer class="text-center text-gray-400 text-xs mt-8 pb-4">
-          © 2026 SSDM Polri - Prototype Sistem Merit Personel
-        </footer>
       </div>
     </main>
   </div>
 
-  <script>
-    var API_URL = 'http://localhost:3000/api';
-    var chartInstance = null;
+  <!-- MODAL TAMBAH PERSONEL -->
+  <div id="modal-tambah" class="modal-overlay">
+    <div class="modal-content p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-gray-800">Tambah Personel Baru</h2>
+        <button onclick="tutupModal('modal-tambah')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+      </div>
+      <form id="form-tambah">
+        <div class="grid grid-cols-2 gap-4">
+          <div><label class="form-label">Nama Lengkap *</label><input type="text" name="nama" class="form-input" required></div>
+          <div><label class="form-label">NRP/NIP *</label><input type="text" name="nrp" class="form-input" required></div>
+          <div><label class="form-label">NIK (16 digit)</label><input type="text" name="nik" maxlength="16" class="form-input"></div>
+          <div><label class="form-label">Pangkat *</label><input type="text" name="pangkat" class="form-input" required></div>
+          <div>
+            <label class="form-label">Jenis Kelamin</label>
+            <select name="jenisKelamin" class="form-input">
+              <option value="">- Pilih -</option>
+              <option value="Laki-laki">Laki-laki</option>
+              <option value="Perempuan">Perempuan</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Jenis Personel</label>
+            <select name="jenisPersonel" class="form-input">
+              <option value="">- Pilih -</option>
+              <option value="POLRI">POLRI</option>
+              <option value="ASN">ASN</option>
+            </select>
+          </div>
+          <div><label class="form-label">Tempat Lahir *</label><input type="text" name="tempatLahir" class="form-input" required></div>
+          <div><label class="form-label">Tanggal Lahir *</label><input type="date" name="tanggalLahir" class="form-input" required></div>
+          <div><label class="form-label">Email</label><input type="email" name="email" class="form-input"></div>
+          <div>
+            <label class="form-label">Tingkat Pendidikan</label>
+            <select name="tingkatPendidikan" class="form-input">
+              <option value="">- Pilih -</option>
+              <option value="SD">SD</option><option value="SMP">SMP</option><option value="SMA">SMA</option>
+              <option value="D3">D3</option><option value="D4/S1">D4/S1</option><option value="S2">S2</option><option value="S3">S3</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Status Personel</label>
+            <select name="statusPersonel" class="form-input">
+              <option value="AKTIF">AKTIF</option>
+              <option value="PENSIUN">PENSIUN</option>
+              <option value="NONAKTIF">NONAKTIF</option>
+            </select>
+          </div>
+          <div id="satker-container">
+            <label class="form-label">Satker *</label>
+            <select name="satkerId" id="input-satker" class="form-input" required></select>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+          <button type="button" onclick="tutupModal('modal-tambah')" class="btn-secondary">Batal</button>
+          <button type="submit" class="btn-primary">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    // 1. FUNGSI LOGIN
+  <!-- MODAL DETAIL PERSONEL -->
+  <div id="modal-detail" class="modal-overlay">
+    <div class="modal-content p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-gray-800" id="detail-nama">Profil Personel</h2>
+        <button onclick="tutupModal('modal-detail')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+      </div>
+      <div class="flex gap-2 mb-4 border-b border-gray-200 pb-2">
+        <button onclick="switchTab('ringkasan')" id="tab-ringkasan" class="tab-btn active">Ringkasan</button>
+        <button onclick="switchTab('riwayat')" id="tab-riwayat" class="tab-btn">Riwayat Jabatan (<span id="count-riwayat">0</span>)</button>
+        <button onclick="switchTab('pendidikan')" id="tab-pendidikan" class="tab-btn">Pendidikan & Diklat (<span id="count-pendidikan">0</span>)</button>
+      </div>
+      <div id="tab-content-ringkasan"></div>
+      <div id="tab-content-riwayat" style="display:none;"></div>
+      <div id="tab-content-pendidikan" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+    var API_URL = window.location.origin + '/api';
+    var chartUsiaInstance = null;
+    var chartPangkatInstance = null;
+    var chartSatkerInstance = null;
+    var currentPage = 1;
+    var currentSearch = '';
+    var currentStatus = '';
+    var currentPersonelId = null;
+    var cachedPersonel = null;
+
+    // ===== LOGIN =====
     document.getElementById('login-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       var username = document.getElementById('username').value;
       var password = document.getElementById('password').value;
       var errorMsg = document.getElementById('login-error');
       errorMsg.innerText = '';
-
       try {
         var response = await fetch(API_URL + '/auth/login', {
           method: 'POST',
@@ -219,7 +291,6 @@
           body: JSON.stringify({ username: username, password: password })
         });
         var data = await response.json();
-
         if (response.ok) {
           localStorage.setItem('token', data.token);
           showDashboard();
@@ -227,94 +298,352 @@
           errorMsg.innerText = data.message || 'Username atau password salah';
         }
       } catch (error) {
-        errorMsg.innerText = 'Tidak dapat terhubung ke server. Pastikan backend menyala.';
+        errorMsg.innerText = 'Tidak dapat terhubung ke server.';
       }
     });
 
-    // 2. FUNGSI MENAMPILKAN DASHBOARD
     function showDashboard() {
       document.getElementById('login-page').classList.add('hidden');
       document.getElementById('dashboard-page').classList.remove('hidden');
+      loadStatistik();
+      loadSatkerDropdown();
       loadPersonel();
     }
 
-    // 3. FUNGSI AMBIL DATA PERSONEL
-    async function loadPersonel() {
-      var token = localStorage.getItem('token');
-      if (!token) return logout();
-
-      try {
-        var response = await fetch(API_URL + '/personel', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        });
-
-        if (response.status === 401) return logout();
-
-        var result = await response.json();
-        var tbody = document.getElementById('personel-table');
-        tbody.innerHTML = '';
-
-        var total = 0;
-        if (result.meta) { total = result.meta.total; } else { total = result.data.length; }
-        document.getElementById('total-personel').innerText = total;
-
-        if (result.data && result.data.length > 0) {
-          for (var i = 0; i < result.data.length; i++) {
-            var p = result.data[i];
-            var tr = document.createElement('tr');
-            tr.className = 'border-b border-gray-100';
-
-            var td1 = document.createElement('td'); td1.className = 'p-3 font-medium'; td1.textContent = p.nrp; tr.appendChild(td1);
-            var td2 = document.createElement('td'); td2.className = 'p-3 font-semibold text-blue-900'; td2.textContent = p.nama; tr.appendChild(td2);
-            var td3 = document.createElement('td'); td3.className = 'p-3';
-            var badge = document.createElement('span'); badge.className = 'bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium'; badge.textContent = p.pangkat; td3.appendChild(badge); tr.appendChild(td3);
-            var td4 = document.createElement('td'); td4.className = 'p-3'; td4.textContent = p.tempatLahir; tr.appendChild(td4);
-
-            var td5 = document.createElement('td'); td5.className = 'p-3';
-            var btn = document.createElement('button');
-            btn.className = 'text-blue-700 hover:text-blue-900 font-medium hover:underline text-xs';
-            btn.textContent = 'Lihat';
-            btn.onclick = function() { alert('Detail: ' + p.nama); };
-            td5.appendChild(btn); tr.appendChild(td5);
-
-            tbody.appendChild(tr);
-          }
-          updateChart(result.data);
-        } else {
-          tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Belum ada data personel.</td></tr>';
-          updateChart([]);
-        }
-      } catch (error) { console.error('Error:', error); }
+    function showPage(page) {
+      document.querySelectorAll('.sidebar a').forEach(function(a) { a.classList.remove('active'); });
+      if (page === 'dashboard') { document.getElementById('menu-dashboard').classList.add('active'); loadStatistik(); }
+      else if (page === 'personel') { document.getElementById('menu-personel').classList.add('active'); loadPersonel(); }
     }
 
-    // 4. FUNGSI UPDATE CHART
-    function updateChart(data) {
-      var ctx = document.getElementById('chartPersonel').getContext('2d');
-      var pangkatCount = {};
-      for (var i = 0; i < data.length; i++) {
-        var p = data[i].pangkat;
-        if (pangkatCount[p]) { pangkatCount[p]++; } else { pangkatCount[p] = 1; }
-      }
-      var labels = Object.keys(pangkatCount);
-      var values = Object.values(pangkatCount);
-      if (labels.length === 0) { labels = ['Belum Ada Data']; values = [1]; }
+    // ===== LOAD STATISTIK & CHARTS =====
+    async function loadStatistik() {
+      var token = localStorage.getItem('token');
+      try {
+        var response = await fetch(API_URL + '/dashboard/statistik', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!response.ok) return;
+        var data = await response.json();
 
-      if (chartInstance) { chartInstance.destroy(); }
-      chartInstance = new Chart(ctx, {
+        document.getElementById('total-personel').innerText = data.totalPersonel;
+
+        var aktif = 0, perwira = 0;
+        var pangkatPerwira = ['Ipda','Iptu','AKP','Kompol','AKBP','Kombes','Brigjen','Irjen','Jenderal'];
+        if (data.golonganPangkat) {
+          Object.keys(data.golonganPangkat).forEach(function(p) {
+            if (pangkatPerwira.indexOf(p) >= 0) perwira += data.golonganPangkat[p];
+          });
+        }
+
+        // HITUNG AKTIF dari tabel
+        var tbody = document.getElementById('personel-table');
+        document.getElementById('total-satker').innerText = Object.keys(data.perSatker).length;
+        document.getElementById('total-perwira').innerText = perwira;
+
+        renderChartUsia(data.kelompokUsia);
+        renderChartPangkat(data.golonganPangkat);
+        renderChartSatker(data.perSatker);
+      } catch (e) { console.error(e); }
+    }
+
+    function renderChartUsia(data) {
+      var ctx = document.getElementById('chartUsia').getContext('2d');
+      if (chartUsiaInstance) chartUsiaInstance.destroy();
+      chartUsiaInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            label: 'Jumlah',
+            data: Object.values(data),
+            backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'],
+            borderRadius: 6
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+      });
+    }
+
+    function renderChartPangkat(data) {
+      var ctx = document.getElementById('chartPangkat').getContext('2d');
+      if (chartPangkatInstance) chartPangkatInstance.destroy();
+      var labels = Object.keys(data).slice(0, 10);
+      var values = labels.map(function(l) { return data[l]; });
+      chartPangkatInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: labels,
           datasets: [{
             data: values,
-            backgroundColor: ['#1e40af', '#fbbf24', '#10b981', '#ef4444', '#8b5cf6'],
+            backgroundColor: ['#1e40af','#fbbf24','#10b981','#ef4444','#8b5cf6','#06b6d4','#f97316','#84cc16','#ec4899','#6366f1'],
             borderWidth: 0
           }]
         },
-        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
       });
     }
 
-    // 5. FUNGSI LOGOUT
+    function renderChartSatker(data) {
+      var ctx = document.getElementById('chartSatker').getContext('2d');
+      if (chartSatkerInstance) chartSatkerInstance.destroy();
+      var entries = Object.entries(data).sort(function(a,b) { return b[1] - a[1]; }).slice(0, 8);
+      var labels = entries.map(function(e) { return e[0].replace('Polda ','').substring(0, 12); });
+      var values = entries.map(function(e) { return e[1]; });
+      chartSatkerInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Personel',
+            data: values,
+            backgroundColor: '#1e40af',
+            borderRadius: 4
+          }]
+        },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } } }
+      });
+    }
+
+    // ===== SATKER DROPDOWN =====
+    async function loadSatkerDropdown() {
+      var token = localStorage.getItem('token');
+      try {
+        var response = await fetch(API_URL + '/satker', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!response.ok) return;
+        var data = await response.json();
+        var select = document.getElementById('input-satker');
+        select.innerHTML = '<option value="">- Pilih Satker -</option>';
+        data.forEach(function(s) {
+          var opt = document.createElement('option');
+          opt.value = s.id;
+          opt.textContent = s.nama;
+          select.appendChild(opt);
+        });
+      } catch (e) { console.error(e); }
+    }
+
+    // ===== LOAD PERSONEL =====
+    async function loadPersonel() {
+      var token = localStorage.getItem('token');
+      if (!token) return logout();
+
+      var search = document.getElementById('search-input').value;
+      var status = document.getElementById('filter-status').value;
+
+      var url = API_URL + '/personel?page=' + currentPage + '&limit=10';
+      if (search) url += '&nama=' + encodeURIComponent(search);
+      if (status) url += '&status=' + status;
+
+      try {
+        var response = await fetch(url, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (response.status === 401) return logout();
+        var result = await response.json();
+        var tbody = document.getElementById('personel-table');
+        tbody.innerHTML = '';
+
+        var personelList = result.data || [];
+        var total = result.meta ? result.meta.total : personelList.length;
+        document.getElementById('total-personel').innerText = total;
+        document.getElementById('pagination-info').innerText = 'Menampilkan ' + personelList.length + ' dari ' + total + ' data (Halaman ' + (result.meta ? result.meta.page : 1) + ')';
+        document.getElementById('btn-prev').disabled = currentPage <= 1;
+        document.getElementById('btn-next').disabled = result.meta ? (currentPage >= result.meta.totalPages) : true;
+
+        if (personelList.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-500">Belum ada data personel.</td></tr>';
+          return;
+        }
+
+        // Simpan di cache untuk modal detail
+        cachedPersonel = {};
+        personelList.forEach(function(p) {
+          cachedPersonel[p.id] = p;
+        });
+
+        personelList.forEach(function(p) {
+          var tr = document.createElement('tr');
+          tr.onclick = function() { bukaDetail(p.id); };
+
+          var td1 = document.createElement('td'); td1.className = 'p-3 font-medium text-xs'; td1.textContent = p.nrp; tr.appendChild(td1);
+          var td2 = document.createElement('td'); td2.className = 'p-3 font-semibold text-blue-900'; td2.textContent = p.nama; tr.appendChild(td2);
+          var td3 = document.createElement('td'); td3.className = 'p-3';
+            var b3 = document.createElement('span'); b3.className = 'bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium'; b3.textContent = p.pangkat; td3.appendChild(b3); tr.appendChild(td3);
+          var td4 = document.createElement('td'); td4.className = 'p-3 text-xs'; td4.textContent = p.jenisPersonel || '-'; tr.appendChild(td4);
+          var td5 = document.createElement('td'); td5.className = 'p-3';
+            var b5 = document.createElement('span');
+            b5.className = p.statusPersonel === 'AKTIF' ? 'bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium' : 'bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium';
+            b5.textContent = p.statusPersonel || '-'; td5.appendChild(b5); tr.appendChild(td5);
+          var td6 = document.createElement('td'); td6.className = 'p-3 text-xs'; td6.textContent = p.satker ? p.satker.nama : '-'; tr.appendChild(td6);
+          var td7 = document.createElement('td'); td7.className = 'p-3';
+            var btn = document.createElement('button');
+            btn.className = 'text-blue-700 hover:text-blue-900 font-medium hover:underline text-xs';
+            btn.textContent = 'Lihat';
+            btn.onclick = function(ev) { ev.stopPropagation(); bukaDetail(p.id); };
+            td7.appendChild(btn); tr.appendChild(td7);
+
+          tbody.appendChild(tr);
+        });
+      } catch (e) { console.error(e); }
+    }
+
+    function nextPage() { currentPage++; loadPersonel(); }
+    function prevPage() { if (currentPage > 1) { currentPage--; loadPersonel(); } }
+
+    // ===== FORM TAMBAH =====
+    function bukaFormTambah() {
+      document.getElementById('modal-tambah').classList.add('active');
+    }
+
+    function tutupModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    document.getElementById('form-tambah').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var token = localStorage.getItem('token');
+      var form = e.target;
+      var payload = {
+        nama: form.nama.value,
+        nrp: form.nrp.value,
+        nik: form.nik.value || null,
+        pangkat: form.pangkat.value,
+        jenisKelamin: form.jenisKelamin.value || null,
+        jenisPersonel: form.jenisPersonel.value || null,
+        tempatLahir: form.tempatLahir.value,
+        tanggalLahir: form.tanggalLahir.value,
+        email: form.email.value || null,
+        tingkatPendidikan: form.tingkatPendidikan.value || null,
+        statusPersonel: form.statusPersonel.value || 'AKTIF',
+        satkerId: parseInt(form.satkerId.value)
+      };
+
+      try {
+        var response = await fetch(API_URL + '/personel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify(payload)
+        });
+        var data = await response.json();
+        if (response.ok) {
+          alert('Personel berhasil ditambahkan!');
+          tutupModal('modal-tambah');
+          form.reset();
+          loadPersonel();
+          loadStatistik();
+        } else {
+          alert('Gagal: ' + (data.message || 'Terjadi kesalahan') + '\n' + JSON.stringify(data.errors || {}));
+        }
+      } catch (e) { alert('Error: ' + e.message); }
+    });
+
+    // ===== MODAL DETAIL =====
+    async function bukaDetail(id) {
+      currentPersonelId = id;
+      var token = localStorage.getItem('token');
+      document.getElementById('modal-detail').classList.add('active');
+      document.getElementById('detail-nama').textContent = 'Memuat...';
+
+      try {
+        var response = await fetch(API_URL + '/personel/' + id, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        var p = await response.json();
+
+        document.getElementById('detail-nama').textContent = p.nama;
+        document.getElementById('count-riwayat').textContent = (p.riwayat || []).length;
+
+        // Load pendidikan
+        var responsePend = await fetch(API_URL + '/personel/' + id + '/pendidikan', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        var pendidikan = responsePend.ok ? await responsePend.json() : [];
+        document.getElementById('count-pendidikan').textContent = pendidikan.length;
+
+        renderRingkasan(p);
+        renderRiwayat(p.riwayat || []);
+        renderPendidikan(pendidikan);
+        switchTab('ringkasan');
+      } catch (e) {
+        document.getElementById('detail-nama').textContent = 'Error memuat data';
+      }
+    }
+
+    function renderRingkasan(p) {
+      var el = document.getElementById('tab-content-ringkasan');
+      el.innerHTML = '';
+      var fields = [
+        ['NRP/NIP', p.nrp], ['NIK', p.nik || '-'], ['Pangkat', p.pangkat],
+        ['Jenis Kelamin', p.jenisKelamin || '-'], ['Jenis Personel', p.jenisPersonel || '-'],
+        ['Tempat Lahir', p.tempatLahir], ['Tanggal Lahir', new Date(p.tanggalLahir).toLocaleDateString('id-ID')],
+        ['Email', p.email || '-'], ['Tingkat Pendidikan', p.tingkatPendidikan || '-'],
+        ['Status Personel', p.statusPersonel], ['Satker', p.satker ? p.satker.nama : '-']
+      ];
+      var html = '<div class="grid grid-cols-2 gap-3">';
+      fields.forEach(function(f) {
+        html += '<div class="bg-gray-50 p-3 rounded"><p class="text-xs text-gray-500">' + f[0] + '</p><p class="text-sm font-semibold text-gray-800">' + f[1] + '</p></div>';
+      });
+      html += '</div>';
+      el.innerHTML = html;
+    }
+
+    function renderRiwayat(riwayat) {
+      var el = document.getElementById('tab-content-riwayat');
+      el.innerHTML = '';
+      if (riwayat.length === 0) {
+        el.innerHTML = '<p class="text-center text-gray-500 py-6">Belum ada riwayat jabatan.</p>';
+        return;
+      }
+      var html = '<div style="position:relative; padding-left: 20px; border-left: 2px solid #3b82f6;">';
+      riwayat.forEach(function(r) {
+        var tanggal = new Date(r.tanggalMulai).toLocaleDateString('id-ID', { year: 'numeric', month: 'long' });
+        var akhir = r.tanggalBerakhir ? new Date(r.tanggalBerakhir).toLocaleDateString('id-ID', { year: 'numeric', month: 'long' }) : 'Sekarang';
+        var statusClass = r.statusJabatan === 'AKTIF' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700';
+        html += '<div style="position:relative; margin-bottom: 20px; padding-left: 15px;">';
+        html += '<div style="position:absolute; left:-27px; top:5px; width:12px; height:12px; border-radius:50%; background:#3b82f6; border:2px solid #fff;"></div>';
+        html += '<p class="font-semibold text-gray-800">' + r.jabatan + '</p>';
+        html += '<p class="text-xs text-gray-500">' + r.satker.nama + ' • ' + r.fungsi + '</p>';
+        html += '<p class="text-xs text-gray-400">' + tanggal + ' — ' + akhir + ' • Nivelering ' + r.nivelering + '</p>';
+        html += '<span class="inline-block mt-1 text-xs px-2 py-1 rounded ' + statusClass + '">' + r.statusJabatan + '</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+      el.innerHTML = html;
+    }
+
+    function renderPendidikan(pendidikan) {
+      var el = document.getElementById('tab-content-pendidikan');
+      el.innerHTML = '';
+      if (pendidikan.length === 0) {
+        el.innerHTML = '<p class="text-center text-gray-500 py-6">Belum ada data pendidikan/diklat.</p>';
+        return;
+      }
+      var html = '<div class="space-y-3">';
+      pendidikan.forEach(function(p) {
+        var badgeClass = p.jenis === 'DIKLAT' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800';
+        html += '<div class="bg-gray-50 p-3 rounded border-l-4 border-blue-500">';
+        html += '<div class="flex justify-between"><p class="font-semibold text-sm">' + p.nama + '</p>';
+        html += '<span class="text-xs px-2 py-1 rounded ' + badgeClass + '">' + p.jenis + '</span></div>';
+        html += '<p class="text-xs text-gray-500">' + (p.institusi || '-') + ' • Lulus ' + (p.tahunLulus || '-') + '</p>';
+        if (p.keterangan) html += '<p class="text-xs text-gray-400 mt-1">' + p.keterangan + '</p>';
+        html += '</div>';
+      });
+      html += '</div>';
+      el.innerHTML = html;
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.getElementById('tab-' + tab).classList.add('active');
+      document.getElementById('tab-content-ringkasan').style.display = tab === 'ringkasan' ? 'block' : 'none';
+      document.getElementById('tab-content-riwayat').style.display = tab === 'riwayat' ? 'block' : 'none';
+      document.getElementById('tab-content-pendidikan').style.display = tab === 'pendidikan' ? 'block' : 'none';
+    }
+
+    // ===== LOGOUT =====
     function logout() {
       localStorage.removeItem('token');
       document.getElementById('dashboard-page').classList.add('hidden');

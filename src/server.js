@@ -45,9 +45,16 @@ const cekSatker = (user, satkerId) => {
 const personelSchema = z.object({
   nama: z.string().min(3, 'Nama minimal 3 karakter'),
   nrp: z.string().regex(/^\d{6,18}$/, 'NRP harus 6-18 digit angka'),
+  nik: z.string().regex(/^\d{16}$/, 'NIK harus 16 digit angka').optional().nullable().or(z.literal('')),
   pangkat: z.string().min(2, 'Pangkat minimal 2 karakter'),
+  jenisKelamin: z.enum(['Laki-laki', 'Perempuan']).optional().nullable(),
+  jenisPersonel: z.enum(['POLRI', 'ASN']).optional().nullable(),
   tempatLahir: z.string().min(3, 'Tempat lahir minimal 3 karakter'),
   tanggalLahir: z.coerce.date().refine(d => d <= new Date(), 'Tanggal lahir tidak boleh masa depan'),
+  email: z.string().email('Format email tidak valid').optional().nullable().or(z.literal('')),
+  tingkatPendidikan: z.enum(['SD', 'SMP', 'SMA', 'D3', 'D4/S1', 'S2', 'S3']).optional().nullable(),
+  statusPersonel: z.enum(['AKTIF', 'PENSIUN', 'NONAKTIF']).optional().default('AKTIF'),
+  pernahDiklat: z.string().optional().nullable(),
   satkerId: z.number().int().positive('Satker ID harus angka positif')
 });
 
@@ -284,6 +291,95 @@ app.delete('/api/personel/:id/riwayat/:riwayatId', auth, async (req, res, next) 
 
     await prisma.riwayatJabatan.delete({ where: { id: riwayatId } });
     res.json({ message: 'Riwayat berhasil dihapus' });
+  } catch (e) { next(e); }
+});
+
+// ---------- Pendidikan & Diklat ----------
+app.get('/api/personel/:id/pendidikan', auth, async (req, res, next) => {
+  try {
+    const personelId = parseInt(req.params.id);
+    const data = await prisma.pendidikan.findMany({
+      where: { personelId },
+      orderBy: { tahunLulus: 'desc' }
+    });
+    res.json(data);
+  } catch (e) { next(e); }
+});
+
+app.post('/api/personel/:id/pendidikan', auth, async (req, res, next) => {
+  try {
+    const personelId = parseInt(req.params.id);
+    const schema = z.object({
+      jenis: z.enum(['PENDIDIKAN', 'DIKLAT']),
+      nama: z.string().min(3, 'Nama minimal 3 karakter'),
+      institusi: z.string().optional().nullable(),
+      tahunLulus: z.number().int().min(1950).max(2100).optional().nullable(),
+      keterangan: z.string().optional().nullable()
+    });
+    const data = schema.parse(req.body);
+    const result = await prisma.pendidikan.create({
+      data: { ...data, personelId }
+    });
+    res.status(201).json(result);
+  } catch (e) { next(e); }
+});
+
+app.delete('/api/personel/:id/pendidikan/:pendidikanId', auth, async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.pendidikanId);
+    await prisma.pendidikan.delete({ where: { id } });
+    res.json({ message: 'Data pendidikan berhasil dihapus' });
+  } catch (e) { next(e); }
+});
+
+// ---------- Dashboard Statistik ----------
+app.get('/api/dashboard/statistik', auth, async (req, res, next) => {
+  try {
+    const whereSatker = req.user.role === 'OPERATOR' ? { satkerId: req.user.satkerId } : {};
+    
+    const semuaPersonel = await prisma.personel.findMany({
+      where: whereSatker,
+      include: { satker: true }
+    });
+
+    const sekarang = new Date();
+    const hitungUsia = (tglLahir) => {
+      return Math.floor((sekarang - new Date(tglLahir)) / (365.25 * 24 * 60 * 60 * 1000));
+    };
+
+    const kelompokUsia = {
+      '18-25 tahun': 0, '26-35 tahun': 0, '36-45 tahun': 0,
+      '46-58 tahun': 0, 'Di atas 58 tahun': 0
+    };
+    const golonganPangkat = {};
+    const perSatker = {};
+
+    semuaPersonel.forEach(p => {
+      const usia = hitungUsia(p.tanggalLahir);
+      if (usia <= 25) kelompokUsia['18-25 tahun']++;
+      else if (usia <= 35) kelompokUsia['26-35 tahun']++;
+      else if (usia <= 45) kelompokUsia['36-45 tahun']++;
+      else if (usia <= 58) kelompokUsia['46-58 tahun']++;
+      else kelompokUsia['Di atas 58 tahun']++;
+
+      golonganPangkat[p.pangkat] = (golonganPangkat[p.pangkat] || 0) + 1;
+      perSatker[p.satker.nama] = (perSatker[p.satker.nama] || 0) + 1;
+    });
+
+    res.json({
+      totalPersonel: semuaPersonel.length,
+      kelompokUsia,
+      golonganPangkat,
+      perSatker
+    });
+  } catch (e) { next(e); }
+});
+
+// ---------- Satker ----------
+app.get('/api/satker', auth, async (req, res, next) => {
+  try {
+    const data = await prisma.satker.findMany({ orderBy: { nama: 'asc' } });
+    res.json(data);
   } catch (e) { next(e); }
 });
 
