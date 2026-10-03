@@ -6,6 +6,10 @@ Prototype aplikasi REST API untuk pengelolaan data kualifikasi dan riwayat jabat
 
 Aplikasi ini juga dilengkapi dengan antarmuka berbasis HTML/TailwindCSS dapat di akses melalui http://localhost:3000/index.html setelah server berjalan
 
+## 🌐 Demo Online (Production)
+Aplikasi dapat diakses secara online di:
+*http://103.89.7.235:3000/index.html*
+
 - Node.js + Express
 - Prisma ORM
 - SQLite (Database)
